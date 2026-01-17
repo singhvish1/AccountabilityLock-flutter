@@ -37,9 +37,6 @@ dependencies:
   shared_preferences: ^2.2.2
   device_info_plus: ^10.0.1
 
-  # Platform Channels (for app blocking)
-  flutter_platform_interface: ^2.0.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
