@@ -1,4 +1,4 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum AuthType { password, pin }
 
@@ -14,6 +14,7 @@ class UserModel {
   final String? fcmToken;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime lastActiveAt;
 
   UserModel({
     required this.id,
@@ -25,10 +26,12 @@ class UserModel {
     this.fcmToken,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? lastActiveAt,
   })  : createdAt = createdAt ?? DateTime.now(),
-        updatedAt = updatedAt ?? DateTime.now();
+        updatedAt = updatedAt ?? DateTime.now(),
+        lastActiveAt = lastActiveAt ?? DateTime.now();
 
-  // Convert to Map (for future Firestore use)
+  // Convert to Map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -38,12 +41,13 @@ class UserModel {
       'authType': authType.name,
       'accountabilityPartnerId': accountabilityPartnerId,
       'fcmToken': fcmToken,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
+      'lastActiveAt': Timestamp.fromDate(lastActiveAt),
     };
   }
 
-  // Create from Map (for future Firestore use)
+  // Create from Firestore Map
   factory UserModel.fromMap(Map<String, dynamic> map, String documentId) {
     return UserModel(
       id: documentId,
@@ -60,10 +64,13 @@ class UserModel {
       accountabilityPartnerId: map['accountabilityPartnerId'],
       fcmToken: map['fcmToken'],
       createdAt: map['createdAt'] != null 
-          ? DateTime.parse(map['createdAt']) 
+          ? (map['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
       updatedAt: map['updatedAt'] != null 
-          ? DateTime.parse(map['updatedAt']) 
+          ? (map['updatedAt'] as Timestamp).toDate()
+          : DateTime.now(),
+      lastActiveAt: map['lastActiveAt'] != null 
+          ? (map['lastActiveAt'] as Timestamp).toDate()
           : DateTime.now(),
     );
   }

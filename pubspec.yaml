@@ -21,17 +21,10 @@ dependencies:
   intl: ^0.18.0
   shared_preferences: ^2.0.0
 
-  # Firebase - commented out until we configure Firebase project
-  # firebase_core: ^2.0.0
-  # firebase_auth: ^4.0.0
-  # firebase_firestore: ^4.0.0
-  # firebase_messaging: ^14.0.0
-  # firebase_analytics: ^10.0.0
-  # local_auth: ^2.0.0
-  # flutter_secure_storage: ^8.0.0
-  # flutter_local_notifications: ^15.0.0
-  # device_info_plus: ^9.0.0
-  # flutter_svg: ^2.0.0
+  # Firebase - Real backend integration
+  firebase_core: ^2.0.0
+  firebase_auth: ^4.0.0
+  firebase_firestore: ^4.0.0
 
 dev_dependencies:
   flutter_test:

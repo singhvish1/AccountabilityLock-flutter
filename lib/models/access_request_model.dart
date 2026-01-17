@@ -1,4 +1,4 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum RequestStatus { pending, approved, denied, expired }
 
@@ -33,9 +33,9 @@ class AccessRequestModel {
       'appName': appName,
       'reason': reason,
       'status': status.name,
-      'requestedAt': requestedAt.toIso8601String(),
-      'respondedAt': respondedAt?.toIso8601String(),
-      'expiresAt': expiresAt?.toIso8601String(),
+      'requestedAt': Timestamp.fromDate(requestedAt),
+      'respondedAt': respondedAt != null ? Timestamp.fromDate(respondedAt!) : null,
+      'expiresAt': expiresAt != null ? Timestamp.fromDate(expiresAt!) : null,
     };
   }
 
@@ -48,6 +48,19 @@ class AccessRequestModel {
       reason: map['reason'] ?? '',
       status: RequestStatus.values.firstWhere(
         (e) => e.name == map['status'],
+        orElse: () => RequestStatus.pending,
+      ),
+      requestedAt: map['requestedAt'] != null
+          ? (map['requestedAt'] as Timestamp).toDate()
+          : DateTime.now(),
+      respondedAt: map['respondedAt'] != null
+          ? (map['respondedAt'] as Timestamp).toDate()
+          : null,
+      expiresAt: map['expiresAt'] != null
+          ? (map['expiresAt'] as Timestamp).toDate()
+          : null,
+    );
+  }
         orElse: () => RequestStatus.pending,
       ),
       requestedAt: map['requestedAt'] != null 
