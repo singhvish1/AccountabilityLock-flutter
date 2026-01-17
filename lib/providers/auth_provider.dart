@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
 import '../utils/constants.dart';
 
 class AuthProvider with ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
+  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   UserModel? _currentUser;
   bool _isAuthenticated = false;
-  bool _isLoading = true;
+  bool _isLoading = false;
   String? _errorMessage;
 
   UserModel? get currentUser => _currentUser;
@@ -19,40 +19,40 @@ class AuthProvider with ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   AuthProvider() {
-    _initAuth();
+    // _initAuth();
   }
 
-  void _initAuth() {
-    _auth.authStateChanges().listen((User? user) async {
-      if (user != null) {
-        await _loadUserData(user.uid);
-      } else {
-        _currentUser = null;
-        _isAuthenticated = false;
-        _isLoading = false;
-        notifyListeners();
-      }
-    });
-  }
+  // void _initAuth() {
+  //   _auth.authStateChanges().listen((User? user) async {
+  //     if (user != null) {
+  //       await _loadUserData(user.uid);
+  //     } else {
+  //       _currentUser = null;
+  //       _isAuthenticated = false;
+  //       _isLoading = false;
+  //       notifyListeners();
+  //     }
+  //   });
+  // }
 
-  Future<void> _loadUserData(String uid) async {
-    try {
-      final doc = await _firestore
-          .collection(FirestoreCollections.users)
-          .doc(uid)
-          .get();
+  // Future<void> _loadUserData(String uid) async {
+  //   try {
+  //     final doc = await _firestore
+  //         .collection(FirestoreCollections.users)
+  //         .doc(uid)
+  //         .get();
 
-      if (doc.exists) {
-        _currentUser = UserModel.fromMap(doc.data()!, doc.id);
-        _isAuthenticated = true;
-      }
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
+  //     if (doc.exists) {
+  //       _currentUser = UserModel.fromMap(doc.data()!, doc.id);
+  //       _isAuthenticated = true;
+  //     }
+  //   } catch (e) {
+  //     _errorMessage = e.toString();
+  //   } finally {
+  //     _isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
 
   Future<void> signUp(
     String email,
@@ -65,33 +65,20 @@ class AuthProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      // Create Firebase auth user
-      final credential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // Create user document in Firestore
-      final user = UserModel(
-        id: credential.user!.uid,
+      // TODO: Implement Firebase sign up
+      // For now, simulate successful signup
+      await Future.delayed(const Duration(seconds: 1));
+      
+      _currentUser = UserModel(
+        id: 'demo-user-id',
         email: email,
         displayName: displayName,
         authType: authType,
       );
-
-      await _firestore
-          .collection(FirestoreCollections.users)
-          .doc(user.id)
-          .set(user.toMap());
-
-      // Update display name
-      await credential.user!.updateDisplayName(displayName);
-
-      await _loadUserData(credential.user!.uid);
-    } on FirebaseAuthException catch (e) {
-      _errorMessage = e.message ?? 'An error occurred';
+      _isAuthenticated = true;
       _isLoading = false;
       notifyListeners();
+
     } catch (e) {
       _errorMessage = e.toString();
       _isLoading = false;
@@ -105,14 +92,20 @@ class AuthProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      await _auth.signInWithEmailAndPassword(
+      // TODO: Implement Firebase sign in
+      // For now, simulate successful signin
+      await Future.delayed(const Duration(seconds: 1));
+      
+      _currentUser = UserModel(
+        id: 'demo-user-id',
         email: email,
-        password: password,
+        displayName: 'Demo User',
+        authType: AuthType.password,
       );
-    } on FirebaseAuthException catch (e) {
-      _errorMessage = e.message ?? 'An error occurred';
+      _isAuthenticated = true;
       _isLoading = false;
       notifyListeners();
+
     } catch (e) {
       _errorMessage = e.toString();
       _isLoading = false;
@@ -121,7 +114,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> signOut() async {
-    await _auth.signOut();
+    // await _auth.signOut();
     _currentUser = null;
     _isAuthenticated = false;
     notifyListeners();

@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum AuthType { password, pin }
 
@@ -28,7 +28,7 @@ class UserModel {
   })  : createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
 
-  // Convert to Firestore document
+  // Convert to Map (for future Firestore use)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -38,12 +38,12 @@ class UserModel {
       'authType': authType.name,
       'accountabilityPartnerId': accountabilityPartnerId,
       'fcmToken': fcmToken,
-      'createdAt': Timestamp.fromDate(createdAt),
-      'updatedAt': Timestamp.fromDate(updatedAt),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
-  // Create from Firestore document
+  // Create from Map (for future Firestore use)
   factory UserModel.fromMap(Map<String, dynamic> map, String documentId) {
     return UserModel(
       id: documentId,
@@ -59,8 +59,12 @@ class UserModel {
       ),
       accountabilityPartnerId: map['accountabilityPartnerId'],
       fcmToken: map['fcmToken'],
-      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      createdAt: map['createdAt'] != null 
+          ? DateTime.parse(map['createdAt']) 
+          : DateTime.now(),
+      updatedAt: map['updatedAt'] != null 
+          ? DateTime.parse(map['updatedAt']) 
+          : DateTime.now(),
     );
   }
 
